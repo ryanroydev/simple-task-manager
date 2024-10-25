@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('tasks')->onDelete('cascade');
             $table->string('title')->unique();
             $table->text('content');
-            $table->string('image')->nullable();
+            $table->string('file_path')->nullable();
             $table->enum('status', ['to-do', 'in-progress', 'done']);
             $table->boolean('is_draft')->default(false);
             $table->softDeletes();

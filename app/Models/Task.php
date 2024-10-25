@@ -10,7 +10,7 @@ class Task extends Model
     use HasFactory;
     use SoftDeletes;
     protected $fillable = [
-        'title', 'content', 'status', 'parent_id', 'user_id', 'image',
+        'title', 'content', 'status', 'parent_id', 'user_id', 'file_path',
     ];
 
     public function subtasks()

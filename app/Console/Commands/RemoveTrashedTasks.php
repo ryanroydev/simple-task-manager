@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
+use App\Models\Task;
+use Carbon\Carbon;
 class RemoveTrashedTasks extends Command
 {
     /**
@@ -25,10 +26,14 @@ class RemoveTrashedTasks extends Command
      */
     public function handle()
     {
-        Task::onlyTrashed()
+        try {
+            Task::onlyTrashed()
             ->where('deleted_at', '<=', Carbon::now()->subDays(30))
-            ->forceDelete(); 
-
+            ->forceDelete();
+        } catch (\Throwable $th) {
+            $this->error($th->getMessage());
+        }
+       
         $this->info('All trashed task over 30 days have been deleted.');
     }
 }
