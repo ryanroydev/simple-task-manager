@@ -21,8 +21,8 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     //Task Resource
-    Route::resource('tasks', TaskController::class)->only(['index','store','edit','destroy']);
-
+    Route::resource('tasks', TaskController::class)->only(['index','create','store','edit','destroy']);
+    Route::post('tasks/{id}/trash',[TaskController::class,'trash'])->name('tasks.trash');
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

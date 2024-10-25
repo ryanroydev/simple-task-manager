@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Http\Requests\TaskStoreRequest;
 class TaskController extends Controller
 {
     public function index(Request $request) {
@@ -24,6 +25,11 @@ class TaskController extends Controller
         $tasks = $query->orderBy('created_at', 'desc')->paginate($request->get('limit', 10));
     
         return view('tasks.index', compact('tasks'));
+    }
+
+    public function create() {
+        
+        return view('tasks.create');
     }
 
     public function store(TaskStoreRequest $request)
@@ -60,5 +66,12 @@ class TaskController extends Controller
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+    }
+
+    public function trash($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete(); // Soft delete
+        return redirect()->back();
     }
 }

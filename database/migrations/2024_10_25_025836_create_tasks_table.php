@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->enum('status', ['to-do', 'in-progress', 'done']);
             $table->boolean('is_draft')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@ class TaskStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class TaskStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:100|unique:tasks',
+            'content' => 'required|string',
+            'status' => 'required|in:to-do,in-progress,done',
+            'image' => 'nullable|image|max:4096',
+            'subtasks.*.title' => 'required|string|max:255',
+            'subtasks.*.content' => 'required|string',
+            'subtasks.*.image' => 'nullable|image|max:4096',
         ];
     }
 }
