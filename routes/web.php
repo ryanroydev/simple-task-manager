@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,5 +18,11 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+
+Route::middleware(['auth'])->group(function () {
+    //Task Resource
+    Route::resource('tasks', TaskController::class)->only(['index','store','edit','destroy']);
+
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
