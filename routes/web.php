@@ -13,9 +13,6 @@ use App\Http\Controllers\TaskController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
@@ -23,6 +20,8 @@ Route::middleware(['auth'])->group(function () {
     //Task Resource
     Route::resource('tasks', TaskController::class)->only(['index','create','store','edit','destroy']);
     Route::post('tasks/{id}/trash',[TaskController::class,'trash'])->name('tasks.trash');
+    Route::post('tasks/{id}/updateStatus', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
+    Route::view('/','home');
+    Route::view('/home','home')->name('home');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -22,4 +22,16 @@ class Task extends Model
     {
         return $this->belongsTo(Task::class, 'parent_id');
     }
+
+    public function countCompletedSubtasks()
+    {
+        $completedCount = $this->subtasks()->where('status', 'done')->count();
+        $totalCount = $this->subtasks()->count();
+        
+        return [
+            'completed' => $completedCount,
+            'total' => $totalCount,
+        ];
+    }
+
 }

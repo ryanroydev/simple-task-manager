@@ -3,27 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\TaskService;
 use App\Models\Task;
 use App\Http\Requests\TaskStoreRequest;
+use App\Http\Requests\TaskUpdateStatusRequest;
 class TaskController extends Controller
 {
+    protected $taskService;
+
+    public function __construct(TaskService $taskService)
+    {
+        $this->taskService = $taskService;
+    }
+
     public function index(Request $request) {
         
-        $query = Task::where('user_id', auth()->id())->whereNull('parent_id');
-    
-        // Filtering status optional
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-    
-        // Search title optional
-        if ($request->filled('search')) {
-            $query->where('title', 'like', '%'.$request->search.'%');
-        }
-    
-        // pagination and user can choose limit 10 or 20 etc per page
-        $tasks = $query->orderBy('created_at', 'desc')->paginate($request->get('limit', 10));
-    
+        $tasks = Task::where('user_id', auth()->id())->whereNull('parent_id')
+                ->when($request->filled('status'), function ($query) use ($request) {
+                    // Filtering status optional
+                    $query->where('status', $request->status);
+                })->when($request->filled('search'), function ($query) use ($request) {
+                    // Search title optional
+                    $query->where('title', 'like', '%' . $request->search . '%');
+                })->orderBy('created_at', 'desc')->paginate($request->get('limit', 10));
+        
+        //keep all get parameters when redirect by paginator
+        $tasks->appends($request->except('page')); 
+
         return view('tasks.index', compact('tasks'));
     }
 
@@ -66,6 +72,16 @@ class TaskController extends Controller
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+    }
+
+    public function updateStatus(TaskUpdateStatusRequest $request, $id)
+    {
+        try {
+            $this->taskService->updateStatus($id, $request->status);
+            return redirect()->back()->with('success', 'Subtask status updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Task ID Not Found or error encountered");
+        }  
     }
 
     public function trash($id)
