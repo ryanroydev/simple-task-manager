@@ -28,17 +28,47 @@ Follow these steps to set up the application on your local machine.
 ```bash
 git clone https://github.com/ryanroydev/simple-task-manager.git
 cd simple-task-manager
+```
+
+### 2. Create the .env File
+
+Copy the example environment file and configure your database settings:
+```bash
 cp .env.example .env
-edit .env file database name and credential
+```
+
+Edit the .env file to set your database name and credentials:
+
+```bash
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
+
+### 3. Install Dependencies
+```bash
 composer install
+```
+
+### 4. Generate Application Key
+```bash
 php artisan key:generate
+```
+
+### 5. run laravel with port 8000 in local
+```bash
 php artisan serve
+```
 
 
+Set Up Cron Job for Laravel Console in ubuntu linux
 
-Set Up Cron Job for Laravel Console
+### 1. Open crontab file
 ```bash
 crontab -e
-Add the following line to your crontab file to call the Laravel scheduler every minute:
-* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
+### 2. Add the following line to your crontab file to call the Laravel scheduler every minute:
 
+```bash
+* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
