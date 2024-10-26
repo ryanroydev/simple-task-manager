@@ -36,7 +36,7 @@
                     <a class="btn btn-primary float-end" href="<?php echo e(route('tasks.create')); ?>">ADD</a>
                     <h1 class="h2 mb-4 card-title">Task List</h1>
                     <div class="table-responsive">
-                        <table id="tasksTable" class="table table-hover">
+                        <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
                                     <th><a href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">Title</a></th>
@@ -57,7 +57,22 @@
                                     <tr class="task-row ">
                                         <td><?php echo e($task->title); ?></td>
                                         <td><?php echo e($task->content); ?></td>
-                                        <td><?php echo e($task->status); ?></td>
+                                        <td>
+                                            <form
+                                                action="<?php echo e(route('tasks.updateStatus', $task->id)); ?>"
+                                                method="POST">
+                                                <?php echo csrf_field(); ?>
+                                                <select name="status" class="form-select"
+                                                    onchange="this.form.submit()">
+                                                    <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($status); ?>"
+                                                            <?php echo e($task->status === $status ? 'selected' : ''); ?>>
+                                                            <?php echo e($status); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                                                </select>
+                                            </form>
+                                        </td>
                                         <td><?php echo e($task->created_at?->format('F j, Y, g:i A')); ?></td>
                                         <td>
                                             <?php
@@ -75,8 +90,12 @@
                                                     onclick="window.open('<?php echo e(asset('storage/' . $task->file_path)); ?>','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             <?php endif; ?>
-                                            <a href="<?php echo e(route('tasks.edit', $task->id)); ?>" class="btn btn-warning btn-sm"
-                                                title="Edit Tasks"><i class="fas fa-edit"></i></a>
+                                            <form action="<?php echo e(route('tasks.draft', $task->id)); ?>"
+                                                method="POST" class="d-inline">
+                                                <?php echo csrf_field(); ?>
+                                                <button type="submit" class="btn btn-warning btn-sm"
+                                                    title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
+                                            </form>
                                             <form action="<?php echo e(route('tasks.trash', $task->id)); ?>" method="POST"
                                                 class="d-inline">
                                                 <?php echo csrf_field(); ?>
@@ -127,9 +146,12 @@
                                                                         title="View Image"><i
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 <?php endif; ?>
-                                                                <a href="<?php echo e(route('tasks.edit', $subtask->id)); ?>"
-                                                                    class="btn btn-warning btn-sm" title="Edit Task"><i
-                                                                        class="fas fa-edit fa-sm"></i></a>
+                                                                <form action="<?php echo e(route('tasks.draft', $subtask->id)); ?>"
+                                                                    method="POST" class="d-inline">
+                                                                    <?php echo csrf_field(); ?>
+                                                                    <button type="submit" class="btn btn-warning btn-sm"
+                                                                        title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
+                                                                </form>
                                                                 <form action="<?php echo e(route('tasks.trash', $subtask->id)); ?>"
                                                                     method="POST" class="d-inline">
                                                                     <?php echo csrf_field(); ?>

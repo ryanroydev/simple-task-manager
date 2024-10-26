@@ -26,7 +26,8 @@ class TaskStoreRequest extends FormRequest
             'title' => 'required|string|max:100|unique:tasks',
             'content' => 'required|string',
             'status' => 'required|in:to-do,in-progress,done',
-            'image' => 'nullable|image|max:4096',
+            'file' => 'nullable|image|max:4096',
+            'is_draft' => 'required|boolean',
             'subtasks' => 'array|nullable', // Ensure subtasks is an array
             'subtasks.*.title' => [
                 'required',
@@ -43,7 +44,7 @@ class TaskStoreRequest extends FormRequest
                 },
             ],
             'subtasks.*.content' => 'required|string',
-            'subtasks.*.image' => 'nullable|image|max:4096',
+            'subtasks.*.file' => 'nullable|image|max:4096',
         ];
     }
     public function messages(): array

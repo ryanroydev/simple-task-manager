@@ -10,7 +10,7 @@
                
                 <h1 class="h3 mb-4">Create Task</h1>
 
-                <form action="<?php echo e(route('tasks.store')); ?>" method="POST" enctype="multipart/form-data" >
+                <form id="taskForm" action="<?php echo e(route('tasks.store')); ?>" method="POST" enctype="multipart/form-data" >
                     <?php echo csrf_field(); ?>
 
                     <!-- Task Title -->
@@ -75,7 +75,27 @@ unset($__errorArgs, $__bag); ?>
                     <!-- File Upload -->
                     <div class="mb-3">
                         <label for="file" class="form-label">Upload File</label>
-                        <input type="file" id="file" name="file" class="form-control" accept="image/*">
+                        <input type="file" id="file" name="file" class="form-control <?php $__errorArgs = ['file'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" accept="image/*">
+                        <?php $__errorArgs = ['file'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback">
+                                <?php echo e($message); ?>
+
+                            </div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Subtasks Section -->
@@ -133,17 +153,40 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
                                 <div class="mb-2">
                                     <label for="subtask_file_<?php echo e($index); ?>" class="form-label">Upload File</label>
-                                    <input type="file" id="subtask_file_<?php echo e($index); ?>" name="subtasks[<?php echo e($index); ?>][file]" class="form-control" accept="image/*">
+                                    <input type="file" id="subtask_file_<?php echo e($index); ?>" name="subtasks[<?php echo e($index); ?>][file]" class="form-control <?php $__errorArgs = ['subtasks.'.$index.'.file'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" accept="image/*">
+                                    <?php $__errorArgs = ['subtasks.'.$index.'.file'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback">
+                                            <?php echo e($message); ?>
+
+                                        </div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                     <button type="button" id="addSubtask" class="btn btn-primary">Add Sub task</button>
 
+                     <!-- Hidden Input for Draft -->
+                    <input type="hidden" name="is_draft" id="is_draft" value="0">
+
                     <!-- Submit Button -->
-                    <button type="button" class="btn btn-danger">Draft</button>
-                    <button type="submit" class="btn btn-success">Publish</button>
-                    
+                    <button type="button" id="saveDraft" class="btn btn-danger">Draft</button>
+                    <button type="submit" class="btn btn-success" id="submitTask">Publish</button>
+            
                 </form>
                 </div>
             </div>
@@ -175,6 +218,15 @@ $('#addSubtask').on('click', function() {
     $('#subtasks').append(subtaskDiv);
     subtaskIndex++;
 });
+$('#saveDraft').on('click', function() {
+    $('#is_draft').val('1'); // Set the value to 1 for drafts
+    $('#taskForm').submit(); // Submit the form
+});
+
+$('#submitTask').on('click', function() {
+    $('#is_draft').val('0'); // Set the value to 0 for submission
+});
+
 </script>
 <?php $__env->stopSection(); ?>
 

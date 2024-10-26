@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="card bg-white">
                 <div class="card-body">
-                    <form method="GET" action="{{ route('tasks.index') }}" class="mb-4">
+                    <form method="GET" action="{{ route('trash.index') }}" class="mb-4">
                         <div class="row">
                             <div class="col-md-4">
                                 <input type="text" name="search" class="form-control" placeholder="Search by title"
@@ -34,16 +34,16 @@
                         <button type="submit" class="btn btn-primary mt-3">Filter</button>
                     </form>
 
-                    <a class="btn btn-primary float-end" href="{{ route('tasks.create') }}">ADD</a>
-                    <h1 class="h2 mb-4 card-title">Task List</h1>
+                    
+                    <h1 class="h2 mb-4 card-title">Trash List</h1>
                     <div class="table-responsive">
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th><a href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Title</a></th>
+                                    <th><a href="{{ route('trash.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Title</a></th>
                                     <th>Content</th>
                                     <th>Status</th>
-                                    <th><a href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
+                                    <th><a href="{{ route('trash.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
                                     <th>Completed Subtask</th>
                                     <th>Actions</th>
                                 </tr>
@@ -91,16 +91,12 @@
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             @endif
-                                            <form action="{{ route('tasks.draft', $task->id) }}"
-                                                method="POST" class="d-inline">
+                                           
+                                            <form action="{{ route('trash.destroy', $task->id) }}" method="POST" 
+                                                class="d-inline" onsubmit="return confirmDelete();">
                                                 @csrf
-                                                <button type="submit" class="btn btn-warning btn-sm"
-                                                    title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
-                                            </form>
-                                            <form action="{{ route('tasks.trash', $task->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Remove Tasks"><i
+                                                @method('delete')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Remove Permanently"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
 
@@ -147,15 +143,11 @@
                                                                         title="View Image"><i
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 @endif
-                                                                <form action="{{ route('tasks.draft', $subtask->id) }}"
-                                                                    method="POST" class="d-inline">
+                                                               
+                                                                <form action="{{ route('trash.destroy', $subtask->id) }}"
+                                                                    method="POST" class="d-inline" onsubmit="return confirmDelete();">
                                                                     @csrf
-                                                                    <button type="submit" class="btn btn-warning btn-sm"
-                                                                        title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
-                                                                </form>
-                                                                <form action="{{ route('tasks.trash', $subtask->id) }}"
-                                                                    method="POST" class="d-inline">
-                                                                    @csrf
+                                                                    @method('delete')
                                                                     <button type="submit" class="btn btn-danger btn-sm"
                                                                         title="Remove Task"><i
                                                                             class="fas fa-trash fa-sm"></i></button>
@@ -176,8 +168,11 @@
             </div>
         </div>
     </div>
-
     <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to permanently delete this task?');
+        }
+    
         $(document).ready(function() {
             $('.btn').click(function(event) {
                 // Prevent the click event from toggle row 

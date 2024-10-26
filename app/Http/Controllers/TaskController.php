@@ -38,18 +38,15 @@ class TaskController extends Controller
         $statuses = Task::getStatuses();
 
         // Build the query to retrieve tasks
-        $tasks = Task::where('user_id', auth()->id())->whereNull('parent_id')
-                ->when($request->filled('status'), function ($query) use ($request) {
-                    // Filtering status optional
-                    $query->where('status', $request->status);
-                })->when($request->filled('search'), function ($query) use ($request) {
-                    // Search title optional
-                    $query->where('title', 'like', '%' . $request->search . '%');
-                })->orderBy($orderBy, $orderDirection)->paginate($request->get('limit', 10));
-                
-        //keep all get parameters when redirect by paginator
-        $tasks->appends($request->except('page')); 
-        
+        $tasks = Task::where('user_id', auth()->id())
+            ->whereNull('parent_id')
+            ->whereIsDraft(false) //show only publish
+            ->when($request->filled('status'), fn($query) => $query->where('status', $request->status))
+            ->when($request->filled('search'), fn($query) => $query->where('title', 'like', '%' . $request->search . '%'))
+            ->orderBy($orderBy, $orderDirection)
+            ->paginate($request->get('limit', 10))
+            ->appends($request->except('page')); // Keep all get parameters when redirect by paginator
+            
          // Return the task index view with tasks and statuses
         return view('tasks.index', compact('tasks','statuses'));
     }
@@ -81,6 +78,7 @@ class TaskController extends Controller
         $task->content = $taskData['content'];
         $task->status = $taskData['status'];
         $task->user_id = auth()->id(); 
+        $task->is_draft = $taskData['is_draft']; // Save draft status
 
         // optional upload 
         if ($request->hasFile('file')) {
@@ -132,10 +130,25 @@ class TaskController extends Controller
      * @param int $id
      * @return RedirectResponse
      */
-    public function trash($id) : RedirectResponse
+    public function trash(int $id): RedirectResponse
     {
-        $task = Task::findOrFail($id);
+        // Attempt to find the task for the authenticated user
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
         $task->delete(); // Soft delete
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Task moved to trash successfully.');
+    }
+
+    /**
+     * Move to Draft.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function draft(int $id): RedirectResponse
+    {
+        // Attempt to find the task for the authenticated user
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+        $task->update(['is_draft' => true]);
+        return redirect()->back()->with('success', 'Task moved to draft successfully.');
     }
 }

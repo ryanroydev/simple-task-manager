@@ -19,13 +19,35 @@
     <!-- Scripts -->
     <?php echo app('Illuminate\Foundation\Vite')(['resources/sass/app.scss', 'resources/js/app.js']); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .nav-link {
+            position: relative; /* To position the pseudo-element */
+            text-decoration: none; /* Remove underline */
+            color: #000; /* Default text color */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -5px; /* Adjust spacing from text */
+            height: 2px; /* Thickness of the border */
+            background-color: transparent; /* Default color */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .nav-link.active::after {
+            background-color: #007bff; /* Color of the active link */
+        }
+    </style>
 
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="<?php echo e(url('/')); ?>">
+                <a class="navbar-brand nav-link <?php echo e(Route::currentRouteName() === 'home' ? 'active' : ''); ?>" href="<?php echo e(route('home')); ?>">
                     <?php echo e(config('app.name', 'Home')); ?>
 
                 </a>
@@ -37,9 +59,11 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo e(route('tasks.index')); ?>">Tasks</a>
-                          </li>
-                        
+                            <a class="nav-link <?php echo e(Route::currentRouteName() === 'tasks.index' ? 'active' : ''); ?>" href="<?php echo e(route('tasks.index')); ?>">Tasks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo e(Route::currentRouteName() === 'trash.index' ? 'active' : ''); ?>" href="<?php echo e(route('trash.index')); ?>">Trash</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

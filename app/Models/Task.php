@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'title', 'content', 'status', 'parent_id', 'user_id', 'file_path',
+        'title', 'content', 'status', 'parent_id', 'user_id', 'file_path', 'is_draft',
     ];
 
     // Define the ENUM values as constants

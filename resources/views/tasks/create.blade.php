@@ -10,7 +10,7 @@
                
                 <h1 class="h3 mb-4">Create Task</h1>
 
-                <form action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data" >
+                <form id="taskForm" action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data" >
                     @csrf
 
                     <!-- Task Title -->
@@ -46,7 +46,12 @@
                     <!-- File Upload -->
                     <div class="mb-3">
                         <label for="file" class="form-label">Upload File</label>
-                        <input type="file" id="file" name="file" class="form-control" accept="image/*">
+                        <input type="file" id="file" name="file" class="form-control @error('file') is-invalid @enderror" accept="image/*">
+                        @error('file')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Subtasks Section -->
@@ -74,17 +79,25 @@
                                 </div>
                                 <div class="mb-2">
                                     <label for="subtask_file_{{ $index }}" class="form-label">Upload File</label>
-                                    <input type="file" id="subtask_file_{{ $index }}" name="subtasks[{{ $index }}][file]" class="form-control" accept="image/*">
+                                    <input type="file" id="subtask_file_{{ $index }}" name="subtasks[{{ $index }}][file]" class="form-control @error('subtasks.'.$index.'.file') is-invalid @enderror" accept="image/*">
+                                    @error('subtasks.'.$index.'.file')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                             </div>
                         @endforeach
                     </div>
                     <button type="button" id="addSubtask" class="btn btn-primary">Add Sub task</button>
 
+                     <!-- Hidden Input for Draft -->
+                    <input type="hidden" name="is_draft" id="is_draft" value="0">
+
                     <!-- Submit Button -->
-                    <button type="button" class="btn btn-danger">Draft</button>
-                    <button type="submit" class="btn btn-success">Publish</button>
-                    
+                    <button type="button" id="saveDraft" class="btn btn-danger">Draft</button>
+                    <button type="submit" class="btn btn-success" id="submitTask">Publish</button>
+            
                 </form>
                 </div>
             </div>
@@ -116,5 +129,14 @@ $('#addSubtask').on('click', function() {
     $('#subtasks').append(subtaskDiv);
     subtaskIndex++;
 });
+$('#saveDraft').on('click', function() {
+    $('#is_draft').val('1'); // Set the value to 1 for drafts
+    $('#taskForm').submit(); // Submit the form
+});
+
+$('#submitTask').on('click', function() {
+    $('#is_draft').val('0'); // Set the value to 0 for submission
+});
+
 </script>
 @endsection
