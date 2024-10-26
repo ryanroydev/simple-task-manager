@@ -37,11 +37,9 @@
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <select id="status" name="status" class="form-select" >
-                           
-                            <option value="to-do" {{ old('status') === 'to-do' ? 'selected' : '' }}>To Do</option>
-                            <option value="in-progress" {{ old('status') === 'in-progress' ? 'selected' : '' }}>In Progress</option>
-                            <option value="done" {{ old('status') === 'done' ? 'selected' : '' }}>Done</option>
-                    
+                            @foreach ($statuses as $status)
+                                <option value="{{ $status }}" {{ old('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -108,7 +106,7 @@ $('#addSubtask').on('click', function() {
             <label for="subtask_file_${subtaskIndex}">Upload File</label>
             <input type="file" id="subtask_file_${subtaskIndex}" name="subtasks[${subtaskIndex}][file]" class="form-control" accept="image/*">
         </div>
-        
+        <br>
     `);
     
     $('#subtasks').append(subtaskDiv);

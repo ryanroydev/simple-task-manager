@@ -13,6 +13,17 @@ class Task extends Model
         'title', 'content', 'status', 'parent_id', 'user_id', 'file_path',
     ];
 
+    // Define the ENUM values as constants
+    const STATUS_TODO = 'to-do';
+    const STATUS_IN_PROGRESS = 'in-progress';
+    const STATUS_DONE = 'done';
+
+    protected static $statuses = [
+        self::STATUS_TODO,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_DONE,
+    ];
+
     public function subtasks()
     {
         return $this->hasMany(Task::class, 'parent_id');
@@ -32,6 +43,11 @@ class Task extends Model
             'completed' => $completedCount,
             'total' => $totalCount,
         ];
+    }
+
+    public static function getStatuses()
+    {
+        return self::$statuses;
     }
 
 }

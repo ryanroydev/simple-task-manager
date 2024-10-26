@@ -17,7 +17,8 @@ class TaskController extends Controller
     }
 
     public function index(Request $request) {
-        
+
+        $statuses = Task::getStatuses();
         $tasks = Task::where('user_id', auth()->id())->whereNull('parent_id')
                 ->when($request->filled('status'), function ($query) use ($request) {
                     // Filtering status optional
@@ -30,12 +31,13 @@ class TaskController extends Controller
         //keep all get parameters when redirect by paginator
         $tasks->appends($request->except('page')); 
 
-        return view('tasks.index', compact('tasks'));
+        return view('tasks.index', compact('tasks','statuses'));
     }
 
     public function create() {
-        
-        return view('tasks.create');
+
+        $statuses = Task::getStatuses();
+        return view('tasks.create',compact('statuses'));
     }
 
     public function store(TaskStoreRequest $request)

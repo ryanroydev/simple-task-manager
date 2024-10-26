@@ -66,11 +66,9 @@ unset($__errorArgs, $__bag); ?>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <select id="status" name="status" class="form-select" >
-                           
-                            <option value="to-do" <?php echo e(old('status') === 'to-do' ? 'selected' : ''); ?>>To Do</option>
-                            <option value="in-progress" <?php echo e(old('status') === 'in-progress' ? 'selected' : ''); ?>>In Progress</option>
-                            <option value="done" <?php echo e(old('status') === 'done' ? 'selected' : ''); ?>>Done</option>
-                    
+                            <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($status); ?>" <?php echo e(old('status') === $status ? 'selected' : ''); ?>><?php echo e($status); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
 
@@ -167,7 +165,7 @@ $('#addSubtask').on('click', function() {
             <label for="subtask_file_${subtaskIndex}">Upload File</label>
             <input type="file" id="subtask_file_${subtaskIndex}" name="subtasks[${subtaskIndex}][file]" class="form-control" accept="image/*">
         </div>
-        
+        <br>
     `);
     
     $('#subtasks').append(subtaskDiv);
