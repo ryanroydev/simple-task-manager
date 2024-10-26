@@ -24,7 +24,7 @@ class RemoveTrashedTasks extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         try {
             Task::onlyTrashed()
@@ -35,5 +35,6 @@ class RemoveTrashedTasks extends Command
         }
        
         $this->info('All trashed task over 30 days have been deleted.');
+        return 0;
     }
 }

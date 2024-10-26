@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskService
 {
-    public function updateStatus(int $subtaskId, String $status)
+    public function updateStatus(int $subtaskId, String $status) : void 
     {
         $subtask = Task::where('id', $subtaskId)
                             ->where('user_id', Auth::id()) // Ensure  user own task

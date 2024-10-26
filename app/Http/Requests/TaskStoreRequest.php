@@ -27,10 +27,12 @@ class TaskStoreRequest extends FormRequest
             'content' => 'required|string',
             'status' => 'required|in:to-do,in-progress,done',
             'image' => 'nullable|image|max:4096',
+            'subtasks' => 'array|nullable', // Ensure subtasks is an array
             'subtasks.*.title' => [
                 'required',
                 'string',
                 'max:100',
+                'unique:tasks',
                 // Custom rule to check for unique titles in the request
                 function ($attribute, $value, $fail) {
                     $titles = collect($this->input('subtasks'))->pluck('title');
@@ -44,7 +46,7 @@ class TaskStoreRequest extends FormRequest
             'subtasks.*.image' => 'nullable|image|max:4096',
         ];
     }
-    public function messages()
+    public function messages(): array
     {
         return [
             'subtasks.*.title.required' => 'The subtask title is required.',

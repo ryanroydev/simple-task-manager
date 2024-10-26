@@ -7,18 +7,37 @@ use App\Services\TaskService;
 use App\Models\Task;
 use App\Http\Requests\TaskStoreRequest;
 use App\Http\Requests\TaskUpdateStatusRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 class TaskController extends Controller
 {
-    protected $taskService;
+    protected TaskService $taskService;
 
+    // Constructor to initialize the TaskService
     public function __construct(TaskService $taskService)
     {
         $this->taskService = $taskService;
     }
 
-    public function index(Request $request) {
+    /**
+     * Display a list of tasks with optional filtering and sorting.
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function index(Request $request) : View
+    {
 
+        $allowedOrderByColumns = ['title', 'created_at']; // add here collumn to sort
+        // Determine the column to order by
+        $orderBy = in_array($request->get('order_by'), $allowedOrderByColumns) ? $request->get('order_by') : 'created_at';
+        // Determine the order direction, defaulting to descending
+        $orderDirection = in_array($request->get('order_direction'), ['asc', 'desc']) ? $request->get('order_direction') : 'desc';
+    
+        // Get all possible task statuses
         $statuses = Task::getStatuses();
+
+        // Build the query to retrieve tasks
         $tasks = Task::where('user_id', auth()->id())->whereNull('parent_id')
                 ->when($request->filled('status'), function ($query) use ($request) {
                     // Filtering status optional
@@ -26,21 +45,34 @@ class TaskController extends Controller
                 })->when($request->filled('search'), function ($query) use ($request) {
                     // Search title optional
                     $query->where('title', 'like', '%' . $request->search . '%');
-                })->orderBy('created_at', 'desc')->paginate($request->get('limit', 10));
-        
+                })->orderBy($orderBy, $orderDirection)->paginate($request->get('limit', 10));
+                
         //keep all get parameters when redirect by paginator
         $tasks->appends($request->except('page')); 
-
+        
+         // Return the task index view with tasks and statuses
         return view('tasks.index', compact('tasks','statuses'));
     }
 
-    public function create() {
+    /**
+     * Show the form to create a new task.
+     *
+     * @return View
+     */
+    public function create() : View
+    {
 
-        $statuses = Task::getStatuses();
-        return view('tasks.create',compact('statuses'));
+        $statuses = Task::getStatuses(); // Get all possible statuses for tasks
+        return view('tasks.create',compact('statuses')); // Return create view with statuses
     }
-
-    public function store(TaskStoreRequest $request)
+    
+    /**
+     * Store a new task.
+     *
+     * @param TaskStoreRequest $request
+     * @return RedirectResponse
+     */
+    public function store(TaskStoreRequest $request) : RedirectResponse
     {
         // Create task
         $taskData = $request->validated();
@@ -76,9 +108,17 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
-    public function updateStatus(TaskUpdateStatusRequest $request, $id)
+    /**
+     * Update the status of a specific subtask.
+     *
+     * @param TaskUpdateStatusRequest $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function updateStatus(TaskUpdateStatusRequest $request, $id) : RedirectResponse
     {
         try {
+            //call task service for update status logic
             $this->taskService->updateStatus($id, $request->status);
             return redirect()->back()->with('success', 'Subtask status updated successfully!');
         } catch (\Exception $e) {
@@ -86,7 +126,13 @@ class TaskController extends Controller
         }  
     }
 
-    public function trash($id)
+    /**
+     * Soft delete a task by ID.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function trash($id) : RedirectResponse
     {
         $task = Task::findOrFail($id);
         $task->delete(); // Soft delete

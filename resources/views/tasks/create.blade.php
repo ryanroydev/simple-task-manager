@@ -72,6 +72,10 @@
                                         </div>
                                     @enderror
                                 </div>
+                                <div class="mb-2">
+                                    <label for="subtask_file_{{ $index }}" class="form-label">Upload File</label>
+                                    <input type="file" id="subtask_file_{{ $index }}" name="subtasks[{{ $index }}][file]" class="form-control" accept="image/*">
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -94,16 +98,16 @@ $('#addSubtask').on('click', function() {
     const subtaskDiv = $('<div>', { class: 'subtask mt-3' });
     subtaskDiv.html(`
         <hr>
-        <div class="form-group">
-            <label for="subtask_title_${subtaskIndex}">Subtask Title</label>
+        <div class="mb-2">
+            <label for="subtask_title_${subtaskIndex}" class="form-label">Subtask Title</label>
             <input type="text" id="subtask_title_${subtaskIndex}" name="subtasks[${subtaskIndex}][title]" class="form-control" >
         </div>
-        <div class="form-group">
-            <label for="subtask_content_${subtaskIndex}">Subtask Content</label>
+        <div class="mb-2">
+            <label for="subtask_content_${subtaskIndex}" class="form-label">Subtask Content</label>
             <textarea id="subtask_content_${subtaskIndex}" name="subtasks[${subtaskIndex}][content]" class="form-control" ></textarea>
         </div>
-        <div class="form-group">
-            <label for="subtask_file_${subtaskIndex}">Upload File</label>
+        <div class="mb-2">
+            <label for="subtask_file_${subtaskIndex}" class="form-label">Upload File</label>
             <input type="file" id="subtask_file_${subtaskIndex}" name="subtasks[${subtaskIndex}][file]" class="form-control" accept="image/*">
         </div>
         <br>

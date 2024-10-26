@@ -39,10 +39,10 @@
                         <table id="tasksTable" class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Title</th>
+                                    <th><a href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">Title</a></th>
                                     <th>Content</th>
                                     <th>Status</th>
-                                    <th>Created At</th>
+                                    <th><a href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">Created At</a></th>
                                     <th>Completed Subtask</th>
                                     <th>Actions</th>
                                 </tr>
