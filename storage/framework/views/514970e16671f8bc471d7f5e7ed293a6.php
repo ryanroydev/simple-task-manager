@@ -91,10 +91,11 @@
                                         <td><?php echo e($task->created_at?->format('F j, Y, g:i A')); ?></td>
                                         <td class="text-success">
                                             <?php
-                                                $subtaskCount = $task->countCompletedSubtasks();
+                                                $subtasks = $task->subtasks()->get(); //resuse subtask to reduce query
+                                                $subtask_total = $subtasks->where('status', 'done')->count();
                                             ?>
-                                            <?php echo e($subtaskCount['completed']); ?>/<?php echo e($subtaskCount['total']); ?> completed
-                                            <?php if($subtaskCount['total'] != 0): ?>
+                                            <?php echo e($subtask_total); ?>/<?php echo e($subtasks->count()); ?> completed
+                                            <?php if($subtask_total != 0): ?>
                                                 <button class="btn btn-primary btn-sm toggle-subtasks"
                                                     data-toggle="<?php echo e($task->id); ?>" title="Show Sub Tasks">Show</button>
                                             <?php endif; ?>
@@ -133,7 +134,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $__currentLoopData = $task->subtasks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subtask): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php $__currentLoopData = $subtasks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subtask): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <tr class="table-info">
                                                             <td colspan="2"><?php echo e($subtask->title); ?></td>
                                                             <td><?php echo e($subtask->content); ?></td>

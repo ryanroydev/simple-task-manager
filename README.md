@@ -61,7 +61,8 @@ php artisan serve
 ```
 
 
-Set Up Cron Job for Laravel Console in ubuntu linux
+
+## Set Up Cron Job for Laravel Console in ubuntu linux
 
 ### 1. Open crontab file
 ```bash
@@ -71,4 +72,10 @@ crontab -e
 
 ```bash
 * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
+
+### 3. Restart Cron:
+
+```bash
+sudo service cron reload
 ```

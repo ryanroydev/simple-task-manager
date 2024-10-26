@@ -62,28 +62,16 @@
                                         <td>{{ $task->title }}<br> <span class="badge rounded-pill bg-danger">{{ $task->daysLeft() }}</span></td>
                                         <td>{{ $task->content }}</td>
                                         <td>
-                                            <form
-                                                action="{{ route('tasks.updateStatus', $task->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                <select name="status" class="form-select"
-                                                    onchange="this.form.submit()">
-                                                    @foreach ($statuses as $status)
-                                                        <option value="{{ $status }}"
-                                                            {{ $task->status === $status ? 'selected' : '' }}>
-                                                            {{ $status }}</option>
-                                                    @endforeach
-
-                                                </select>
-                                            </form>
+                                            {{ $task->status }}
                                         </td>
                                         <td>{{ $task->created_at?->format('F j, Y, g:i A') }}</td>
                                         <td>
                                             @php
-                                                $subtaskCount = $task->countCompletedSubtasks();
+                                                $subtasks = $task->subtasks()->get(); //resuse subtask to reduce query
+                                                $subtask_total = $subtasks->where('status', 'done')->count();
                                             @endphp
-                                            {{ $subtaskCount['completed'] }}/{{ $subtaskCount['total'] }} completed
-                                            @if ($subtaskCount['total'] != 0)
+                                            {{ $subtask_total }}/{{ $subtasks->count() }} completed
+                                            @if ($subtask_total != 0)
                                                 <button class="btn btn-primary btn-sm toggle-subtasks"
                                                     data-toggle="{{ $task->id }}" title="Show Sub Tasks">Show</button>
                                             @endif
@@ -125,26 +113,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($task->subtasks as $subtask)
+                                                    @foreach ($subtasks as $subtask)
                                                         <tr class="table-info">
                                                             <td colspan="2">{{ $subtask->title }}</td>
                                                             <td>{{ $subtask->content }}</td>
-                                                            <td>
-                                                                <form
-                                                                    action="{{ route('tasks.updateStatus', $subtask->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <select name="status" class="form-select"
-                                                                        onchange="this.form.submit()">
-                                                                        @foreach ($statuses as $status)
-                                                                            <option value="{{ $status }}"
-                                                                                {{ $subtask->status === $status ? 'selected' : '' }}>
-                                                                                {{ $status }}</option>
-                                                                        @endforeach
-
-                                                                    </select>
-                                                                </form>
-                                                            </td>
+                                                            <td>{{ $subtask->status }}</td>
                                                             <td>{{ $subtask->created_at?->format('F j, Y, g:i A') }}</td>
                                                             <td>
                                                                 @if ($subtask->file_path)

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrashController;
+use App\Http\Controllers\DraftController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,6 +27,9 @@ Route::middleware(['auth'])->group(function () {
     //trash Task
     Route::resource('trash', TrashController::class)->only(['index','destroy']);
     Route::post('trash/{id}/restore',[TrashController::class,'restore'])->name('trash.restore');
+
+    Route::resource('draft', DraftController::class)->only(['index','destroy']);
+    Route::post('draft/{id}/publish',[DraftController::class,'publish'])->name('draft.publish');
 
     Route::view('/','home')->name('home');
 

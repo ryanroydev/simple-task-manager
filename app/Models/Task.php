@@ -51,8 +51,10 @@ class Task extends Model
      */
     public function countCompletedSubtasks() : array
     {
-        $completedCount = $this->subtasks()->where('status', 'done')->count();
-        $totalCount = $this->subtasks()->count();
+        $subtasks = $this->subtasks()->get();
+
+        $completedCount = $subtasks->where('status', 'done')->count();
+        $totalCount = $subtasks->count();
         
         return [
             'completed' => $completedCount,

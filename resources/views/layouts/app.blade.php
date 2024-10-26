@@ -61,6 +61,9 @@
                             <a class="nav-link {{ Route::currentRouteName() === 'tasks.index' ? 'active' : '' }}" href="{{ route('tasks.index') }}">Tasks</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ Route::currentRouteName() === 'draft.index' ? 'active' : '' }}" href="{{ route('draft.index') }}">Draft</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ Route::currentRouteName() === 'trash.index' ? 'active' : '' }}" href="{{ route('trash.index') }}">Trash</a>
                         </li>
                     </ul>

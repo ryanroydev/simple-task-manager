@@ -3,9 +3,10 @@
 @section('content')
     <div class="container my-4">
         <div class="row justify-content-center">
+        
             <div class="card bg-white">
                 <div class="card-body">
-                    <form method="GET" action="{{ route('tasks.index') }}" class="mb-4">
+                    <form method="GET" action="{{ route('draft.index') }}" class="mb-4">
                         <div class="row">
                             <div class="col-md-4">
                                 <input type="text" name="search" class="form-control" placeholder="Search by title"
@@ -34,36 +35,19 @@
                         <button type="submit" class="btn btn-primary mt-3">Filter</button>
                     </form>
 
-                    <a class="btn btn-primary float-end" href="{{ route('tasks.create') }}">ADD</a>
-                    <h1 class="h2 mb-4 card-title">Task List</h1>
+                    
+                    <h1 class="h2 mb-4 card-title">Draft List</h1>
+                     <hr>
                     <div class="table-responsive">
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th>
-                                        <a
-                                            href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">
-                                            Title
-                                            @if (request('order_by') == 'title')
-                                                <i
-                                                    class="fas fa-arrow-{{ request('order_direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                            @endif
-                                        </a>
-                                    </th>
+                                    <th><a href="{{ route('draft.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Title</a></th>
                                     <th>Content</th>
-                                    <th style="min-width: 120px;">Status</th>
-                                    <th style="min-width: 120px;">
-                                        <a
-                                            href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">
-                                            Created At
-                                            @if (request('order_by') == 'created_at')
-                                                <i
-                                                    class="fas fa-arrow-{{ request('order_direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                            @endif
-                                        </a>
-                                    </th>
+                                    <th>Status</th>
+                                    <th><a href="{{ route('draft.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
                                     <th>Completed Subtask</th>
-                                    <th style="min-width: 120px;">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,23 +58,13 @@
                                 @endif
                                 @foreach ($tasks as $task)
                                     <tr class="task-row ">
-                                        <td>{{ $task->title }}</td>
+                                        <td>{{ $task->title }}<br> <span class="badge rounded-pill bg-danger">{{ $task->daysLeft() }}</span></td>
                                         <td>{{ $task->content }}</td>
-                                        <td class="text-center">
-                                            <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST">
-                                                @csrf
-                                                <select name="status" class="form-select" onchange="this.form.submit()">
-                                                    @foreach ($statuses as $status)
-                                                        <option value="{{ $status }}"
-                                                            {{ $task->status === $status ? 'selected' : '' }}>
-                                                            {{ $status }}</option>
-                                                    @endforeach
-
-                                                </select>
-                                            </form>
+                                        <td>
+                                            {{ $task->status }}
                                         </td>
                                         <td>{{ $task->created_at?->format('F j, Y, g:i A') }}</td>
-                                        <td class="text-success">
+                                        <td>
                                             @php
                                                 $subtasks = $task->subtasks()->get(); //resuse subtask to reduce query
                                                 $subtask_total = $subtasks->where('status', 'done')->count();
@@ -107,18 +81,21 @@
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             @endif
-                                            <form action="{{ route('tasks.draft', $task->id) }}" method="POST"
-                                                class="d-inline">
+                                            <form action="{{ route('draft.publish', $task->id) }}" method="POST" 
+                                                class="d-inline" >
                                                 @csrf
-                                                <button type="submit" class="btn btn-warning btn-sm" title="Move to Draft">
-                                                    <i class="fas fa-file-alt"></i></button>
+                                               
+                                                <button type="submit" class="btn btn-success btn-sm" title="Publish Task"><i
+                                                        class="fas fa-save"></i></button>
                                             </form>
-                                            <form action="{{ route('tasks.trash', $task->id) }}" method="POST"
-                                                class="d-inline">
+                                            <form action="{{ route('draft.destroy', $task->id) }}" method="POST" 
+                                                class="d-inline" >
                                                 @csrf
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Remove Tasks"><i
+                                                @method('delete')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Move to Trash"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
+                                            
 
                                         </td>
                                     </tr>
@@ -129,9 +106,9 @@
                                                     <tr class="table-info">
                                                         <th colspan="2">Sub task Title</th>
                                                         <th>Sub task Content</th>
-                                                        <th style="min-width: 120px;">Status</th>
-                                                        <th style="min-width: 120px;">Created At</th>
-                                                        <th style="min-width: 120px;">Actions</th>
+                                                        <th>Status</th>
+                                                        <th>Created At</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -139,38 +116,17 @@
                                                         <tr class="table-info">
                                                             <td colspan="2">{{ $subtask->title }}</td>
                                                             <td>{{ $subtask->content }}</td>
-                                                            <td>
-                                                                <form
-                                                                    action="{{ route('tasks.updateStatus', $subtask->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <select name="status" class="form-select"
-                                                                        onchange="this.form.submit()">
-                                                                        @foreach ($statuses as $status)
-                                                                            <option value="{{ $status }}"
-                                                                                {{ $subtask->status === $status ? 'selected' : '' }}>
-                                                                                {{ $status }}</option>
-                                                                        @endforeach
-
-                                                                    </select>
-                                                                </form>
-                                                            </td>
+                                                            <td>{{ $subtask->status }}</td>
                                                             <td>{{ $subtask->created_at?->format('F j, Y, g:i A') }}</td>
-                                                            <td class="text-center">
+                                                            <td>
                                                                 @if ($subtask->file_path)
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('{{ asset('storage/' . $subtask->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 @endif
+                                                               
                                                                 
-                                                                <form action="{{ route('tasks.trash', $subtask->id) }}"
-                                                                    method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                                        title="Remove Task"><i
-                                                                            class="fas fa-trash fa-sm"></i></button>
-                                                                </form>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -187,8 +143,11 @@
             </div>
         </div>
     </div>
-
     <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to permanently delete this task?');
+        }
+    
         $(document).ready(function() {
             $('.btn').click(function(event) {
                 // Prevent the click event from toggle row 

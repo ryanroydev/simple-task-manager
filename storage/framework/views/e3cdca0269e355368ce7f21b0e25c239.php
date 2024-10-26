@@ -62,6 +62,9 @@
                             <a class="nav-link <?php echo e(Route::currentRouteName() === 'tasks.index' ? 'active' : ''); ?>" href="<?php echo e(route('tasks.index')); ?>">Tasks</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link <?php echo e(Route::currentRouteName() === 'draft.index' ? 'active' : ''); ?>" href="<?php echo e(route('draft.index')); ?>">Draft</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link <?php echo e(Route::currentRouteName() === 'trash.index' ? 'active' : ''); ?>" href="<?php echo e(route('trash.index')); ?>">Trash</a>
                         </li>
                     </ul>
