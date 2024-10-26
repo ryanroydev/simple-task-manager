@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('tasks/{id}/updateStatus', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
     //trash Task
     Route::resource('trash', TrashController::class)->only(['index','destroy']);
+    Route::post('trash/{id}/restore',[TrashController::class,'restore'])->name('trash.restore');
 
     Route::view('/','home')->name('home');
 

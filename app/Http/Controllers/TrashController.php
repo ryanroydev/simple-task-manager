@@ -54,4 +54,18 @@ class TrashController extends Controller
         $task->forceDelete(); // force delete
         return redirect()->back()->with('success', 'Task Permanently deleted.');
     }
+
+    /**
+     * Restore a task by ID.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        // Attempt to find the task for the authenticated user
+        $task = Task::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $task->restore(); // restore trash
+        return redirect()->back()->with('success', 'Task restored successfully.');
+    }
 }

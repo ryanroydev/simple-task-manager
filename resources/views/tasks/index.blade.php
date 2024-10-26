@@ -40,12 +40,30 @@
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th><a href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Title</a></th>
+                                    <th>
+                                        <a
+                                            href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">
+                                            Title
+                                            @if (request('order_by') == 'title')
+                                                <i
+                                                    class="fas fa-arrow-{{ request('order_direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                            @endif
+                                        </a>
+                                    </th>
                                     <th>Content</th>
-                                    <th>Status</th>
-                                    <th><a href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
+                                    <th style="min-width: 120px;">Status</th>
+                                    <th style="min-width: 120px;">
+                                        <a
+                                            href="{{ route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">
+                                            Created At
+                                            @if (request('order_by') == 'created_at')
+                                                <i
+                                                    class="fas fa-arrow-{{ request('order_direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                            @endif
+                                        </a>
+                                    </th>
                                     <th>Completed Subtask</th>
-                                    <th>Actions</th>
+                                    <th style="min-width: 120px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,13 +76,10 @@
                                     <tr class="task-row ">
                                         <td>{{ $task->title }}</td>
                                         <td>{{ $task->content }}</td>
-                                        <td>
-                                            <form
-                                                action="{{ route('tasks.updateStatus', $task->id) }}"
-                                                method="POST">
+                                        <td class="text-center">
+                                            <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST">
                                                 @csrf
-                                                <select name="status" class="form-select"
-                                                    onchange="this.form.submit()">
+                                                <select name="status" class="form-select" onchange="this.form.submit()">
                                                     @foreach ($statuses as $status)
                                                         <option value="{{ $status }}"
                                                             {{ $task->status === $status ? 'selected' : '' }}>
@@ -75,7 +90,7 @@
                                             </form>
                                         </td>
                                         <td>{{ $task->created_at?->format('F j, Y, g:i A') }}</td>
-                                        <td>
+                                        <td class="text-success">
                                             @php
                                                 $subtaskCount = $task->countCompletedSubtasks();
                                             @endphp
@@ -91,11 +106,11 @@
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             @endif
-                                            <form action="{{ route('tasks.draft', $task->id) }}"
-                                                method="POST" class="d-inline">
+                                            <form action="{{ route('tasks.draft', $task->id) }}" method="POST"
+                                                class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-warning btn-sm"
-                                                    title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
+                                                <button type="submit" class="btn btn-warning btn-sm" title="Move to Draft">
+                                                    <i class="fas fa-file-alt"></i></button>
                                             </form>
                                             <form action="{{ route('tasks.trash', $task->id) }}" method="POST"
                                                 class="d-inline">
@@ -113,9 +128,9 @@
                                                     <tr class="table-info">
                                                         <th colspan="2">Sub task Title</th>
                                                         <th>Sub task Content</th>
-                                                        <th>Status</th>
-                                                        <th>Created At</th>
-                                                        <th>Actions</th>
+                                                        <th style="min-width: 120px;">Status</th>
+                                                        <th style="min-width: 120px;">Created At</th>
+                                                        <th style="min-width: 120px;">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -140,19 +155,14 @@
                                                                 </form>
                                                             </td>
                                                             <td>{{ $subtask->created_at?->format('F j, Y, g:i A') }}</td>
-                                                            <td>
+                                                            <td class="text-center">
                                                                 @if ($subtask->file_path)
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('{{ asset('storage/' . $subtask->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 @endif
-                                                                <form action="{{ route('tasks.draft', $subtask->id) }}"
-                                                                    method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn btn-warning btn-sm"
-                                                                        title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
-                                                                </form>
+                                                                
                                                                 <form action="{{ route('tasks.trash', $subtask->id) }}"
                                                                     method="POST" class="d-inline">
                                                                     @csrf

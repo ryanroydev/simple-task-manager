@@ -3,6 +3,7 @@
 @section('content')
     <div class="container my-4">
         <div class="row justify-content-center">
+        
             <div class="card bg-white">
                 <div class="card-body">
                     <form method="GET" action="{{ route('trash.index') }}" class="mb-4">
@@ -36,6 +37,8 @@
 
                     
                     <h1 class="h2 mb-4 card-title">Trash List</h1>
+                    <strong>Attention:</strong> Tasks moved to the trash will be permanently deleted after 30 days. If you want to keep a task, please restore it before the 30-day period expires. Once deleted, the task cannot be recovered.
+                    <hr>
                     <div class="table-responsive">
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
@@ -56,7 +59,7 @@
                                 @endif
                                 @foreach ($tasks as $task)
                                     <tr class="task-row ">
-                                        <td>{{ $task->title }}</td>
+                                        <td>{{ $task->title }}<br> <span class="badge rounded-pill bg-danger">{{ $task->daysLeft() }}</span></td>
                                         <td>{{ $task->content }}</td>
                                         <td>
                                             <form
@@ -91,7 +94,13 @@
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             @endif
-                                           
+                                            <form action="{{ route('trash.restore', $task->id) }}" method="POST" 
+                                                class="d-inline" >
+                                                @csrf
+                                               
+                                                <button type="submit" class="btn btn-success btn-sm" title="Restore Task"><i
+                                                        class="fas fa-undo"></i></button>
+                                            </form>
                                             <form action="{{ route('trash.destroy', $task->id) }}" method="POST" 
                                                 class="d-inline" onsubmit="return confirmDelete();">
                                                 @csrf
@@ -99,6 +108,7 @@
                                                 <button type="submit" class="btn btn-danger btn-sm" title="Remove Permanently"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
+                                            
 
                                         </td>
                                     </tr>
@@ -144,14 +154,7 @@
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 @endif
                                                                
-                                                                <form action="{{ route('trash.destroy', $subtask->id) }}"
-                                                                    method="POST" class="d-inline" onsubmit="return confirmDelete();">
-                                                                    @csrf
-                                                                    @method('delete')
-                                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                                        title="Remove Task"><i
-                                                                            class="fas fa-trash fa-sm"></i></button>
-                                                                </form>
+                                                                
                                                             </td>
                                                         </tr>
                                                     @endforeach

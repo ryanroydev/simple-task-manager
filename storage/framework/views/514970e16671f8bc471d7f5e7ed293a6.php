@@ -39,12 +39,30 @@
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th><a href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">Title</a></th>
+                                    <th>
+                                        <a
+                                            href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'title', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">
+                                            Title
+                                            <?php if(request('order_by') == 'title'): ?>
+                                                <i
+                                                    class="fas fa-arrow-<?php echo e(request('order_direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                                            <?php endif; ?>
+                                        </a>
+                                    </th>
                                     <th>Content</th>
-                                    <th>Status</th>
-                                    <th><a href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">Created At</a></th>
+                                    <th style="min-width: 120px;">Status</th>
+                                    <th style="min-width: 120px;">
+                                        <a
+                                            href="<?php echo e(route('tasks.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc']))); ?>">
+                                            Created At
+                                            <?php if(request('order_by') == 'created_at'): ?>
+                                                <i
+                                                    class="fas fa-arrow-<?php echo e(request('order_direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                                            <?php endif; ?>
+                                        </a>
+                                    </th>
                                     <th>Completed Subtask</th>
-                                    <th>Actions</th>
+                                    <th style="min-width: 120px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,13 +75,10 @@
                                     <tr class="task-row ">
                                         <td><?php echo e($task->title); ?></td>
                                         <td><?php echo e($task->content); ?></td>
-                                        <td>
-                                            <form
-                                                action="<?php echo e(route('tasks.updateStatus', $task->id)); ?>"
-                                                method="POST">
+                                        <td class="text-center">
+                                            <form action="<?php echo e(route('tasks.updateStatus', $task->id)); ?>" method="POST">
                                                 <?php echo csrf_field(); ?>
-                                                <select name="status" class="form-select"
-                                                    onchange="this.form.submit()">
+                                                <select name="status" class="form-select" onchange="this.form.submit()">
                                                     <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option value="<?php echo e($status); ?>"
                                                             <?php echo e($task->status === $status ? 'selected' : ''); ?>>
@@ -74,7 +89,7 @@
                                             </form>
                                         </td>
                                         <td><?php echo e($task->created_at?->format('F j, Y, g:i A')); ?></td>
-                                        <td>
+                                        <td class="text-success">
                                             <?php
                                                 $subtaskCount = $task->countCompletedSubtasks();
                                             ?>
@@ -90,11 +105,11 @@
                                                     onclick="window.open('<?php echo e(asset('storage/' . $task->file_path)); ?>','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             <?php endif; ?>
-                                            <form action="<?php echo e(route('tasks.draft', $task->id)); ?>"
-                                                method="POST" class="d-inline">
+                                            <form action="<?php echo e(route('tasks.draft', $task->id)); ?>" method="POST"
+                                                class="d-inline">
                                                 <?php echo csrf_field(); ?>
-                                                <button type="submit" class="btn btn-warning btn-sm"
-                                                    title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
+                                                <button type="submit" class="btn btn-warning btn-sm" title="Move to Draft">
+                                                    <i class="fas fa-file-alt"></i></button>
                                             </form>
                                             <form action="<?php echo e(route('tasks.trash', $task->id)); ?>" method="POST"
                                                 class="d-inline">
@@ -112,9 +127,9 @@
                                                     <tr class="table-info">
                                                         <th colspan="2">Sub task Title</th>
                                                         <th>Sub task Content</th>
-                                                        <th>Status</th>
-                                                        <th>Created At</th>
-                                                        <th>Actions</th>
+                                                        <th style="min-width: 120px;">Status</th>
+                                                        <th style="min-width: 120px;">Created At</th>
+                                                        <th style="min-width: 120px;">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -139,19 +154,14 @@
                                                                 </form>
                                                             </td>
                                                             <td><?php echo e($subtask->created_at?->format('F j, Y, g:i A')); ?></td>
-                                                            <td>
+                                                            <td class="text-center">
                                                                 <?php if($subtask->file_path): ?>
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('<?php echo e(asset('storage/' . $subtask->file_path)); ?>','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
                                                                             class="fas fa-eye fa-sm"></i></a>
                                                                 <?php endif; ?>
-                                                                <form action="<?php echo e(route('tasks.draft', $subtask->id)); ?>"
-                                                                    method="POST" class="d-inline">
-                                                                    <?php echo csrf_field(); ?>
-                                                                    <button type="submit" class="btn btn-warning btn-sm"
-                                                                        title="Move to Draft"> <i class="fas fa-file-alt"></i></button>
-                                                                </form>
+                                                                
                                                                 <form action="<?php echo e(route('tasks.trash', $subtask->id)); ?>"
                                                                     method="POST" class="d-inline">
                                                                     <?php echo csrf_field(); ?>

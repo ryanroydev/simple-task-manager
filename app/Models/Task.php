@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Task extends Model
 {
     use HasFactory, SoftDeletes;
@@ -69,4 +70,13 @@ class Task extends Model
         return self::$statuses;
     }
 
+    public function daysLeft(): String
+    {
+        if ($this->deleted_at) {
+            // Calculate days until permanent deletion (30 days after deleted_at)
+            return Carbon::now()->diffInDays(Carbon::parse($this->deleted_at)->addDays(30), false) . " days left" ;
+        }
+
+        return ''; // Return null if the task is not deleted
+    }
 }
