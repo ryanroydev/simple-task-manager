@@ -14,7 +14,9 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -110,6 +112,31 @@
         <main class="py-4">
             @yield('content')
         </main>
+        
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+        @if( Session::has("success") )
+                <script type="text/javascript">
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: "{{ Session::get("success") }}"
+                    })
+                </script>
+
+            @endif
+
+            @if( Session::has("error") )
+                <script type="text/javascript">
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "{{ Session::get("error") }}"
+                    })
+                </script>
+
+            @endif
     </div>
 </body>
 </html>

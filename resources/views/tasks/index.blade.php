@@ -97,9 +97,10 @@
                                             @php
                                                 $subtasks = $task->subtasks()->get(); //resuse subtask to reduce query
                                                 $subtask_total = $subtasks->where('status', 'done')->count();
+                                                $subtask_count = $subtasks->count();
                                             @endphp
-                                            {{ $subtask_total }}/{{ $subtasks->count() }} completed
-                                            @if ($subtask_total != 0)
+                                            {{ $subtask_total }}/{{ $subtask_count }} completed
+                                            @if ($subtask_count != 0)
                                                 <button class="btn btn-primary btn-sm toggle-subtasks"
                                                     data-toggle="{{ $task->id }}" title="Show Sub Tasks">Show</button>
                                             @endif
