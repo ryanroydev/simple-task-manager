@@ -34,7 +34,10 @@
                     </form>
 
                     <a class="btn btn-primary float-end" href="<?php echo e(route('tasks.create')); ?>">ADD</a>
+                  
                     <h1 class="h2 mb-4 card-title">Task List</h1>
+                    <strong>Attention:</strong> When you mark any subtask as "done," the main task is automatically completed, and similarly, changing the main task's status will update all associated subtasks.
+                    <hr>
                     <div class="table-responsive">
                         <table id="tasksTable" class="table table-hover table-bordered">
                             <thead class="table-light">
