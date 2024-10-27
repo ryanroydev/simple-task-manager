@@ -27,10 +27,10 @@ Route::middleware(['auth'])->group(function () {
     //trash Task
     Route::resource('trash', TrashController::class)->only(['index','destroy']);
     Route::post('trash/{id}/restore',[TrashController::class,'restore'])->name('trash.restore');
-
-    Route::resource('draft', DraftController::class)->only(['index','destroy']);
+    //draft task
+    Route::resource('draft', DraftController::class)->only(['index','destroy','edit','update']);
     Route::post('draft/{id}/publish',[DraftController::class,'publish'])->name('draft.publish');
-
+    //dashboard
     Route::view('/','home')->name('home');
 
 });

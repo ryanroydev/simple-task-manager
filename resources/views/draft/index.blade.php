@@ -82,6 +82,8 @@
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                     title="View Image"><i class="fas fa-eye"></i></a>
                                             @endif
+                                            <a href="{{ route('draft.edit',$task->id) }}" class="btn btn-primary btn-sm"
+                                                   title="Edit Draft Task"><i class="fas fa-edit"></i></a>
                                             <form action="{{ route('draft.publish', $task->id) }}" method="POST" 
                                                 class="d-inline" >
                                                 @csrf

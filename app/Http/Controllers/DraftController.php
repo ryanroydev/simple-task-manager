@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Http\Requests\DraftUpdateRequest;
 use App\Models\Task;
+
 class DraftController extends Controller
 {
   /**
@@ -55,7 +57,82 @@ class DraftController extends Controller
     }
 
     /**
-     * publish a task by ID.
+     * Edit a draft task by ID.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return View
+     */
+    public function edit(int $id): View
+    {
+        // Attempt to find the task for the authenticated user
+        $task = Task::whereIsDraft(true)->where('user_id', auth()->id())->findOrFail($id);
+        $statuses = Task::getStatuses(); // Get all possible statuses for tasks
+        return view('draft.edit', compact('task', 'statuses'));
+    }
+
+    /**
+     * Update an existing draf task.
+     *
+     * @param TaskUpdateRequest $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(DraftUpdateRequest $request, int $id) : RedirectResponse
+    {
+        // Find the existing task
+        $task = Task::findOrFail($id);
+
+        // Update task attributes
+        $taskData = $request->validated();
+        $task->title = $taskData['title'];
+        $task->content = $taskData['content'];
+        $task->status = $taskData['status'];
+        $task->is_draft = $taskData['is_draft'];
+
+        // Optional file upload
+        if ($request->hasFile('file')) {
+            $task->file_path = $request->file('file')->store('uploads/tasks', 'public');
+        }
+
+        $task->save();
+
+        // Check if subtasks are provided
+        if ($request->has('subtasks')) {
+            // Update existing subtasks
+            foreach ($request->subtasks as $subtaskData) {
+                if (isset($subtaskData['id'])) {
+                    // Update existing subtask
+                    $subtask = Task::findOrFail($subtaskData['id']);
+                    $subtask->fill($subtaskData);
+                    
+                    // Optional file upload for subtasks
+                    if (isset($subtaskData['file']) && $subtaskData['file']) {
+                        $subtask->file_path = $subtaskData['file']->store('uploads/subtasks', 'public');
+                    }
+
+                    $subtask->save();
+                } else {
+                    // Create a new subtask if no ID is provided
+                    $subtask = new Task($subtaskData);
+                    $subtask->parent_id = $task->id; // Main task ID
+                    $subtask->user_id = auth()->id();
+
+                    // Optional file upload for new subtasks
+                    if (isset($subtaskData['file']) && $subtaskData['file']) {
+                        $subtask->file_path = $subtaskData['file']->store('uploads/subtasks', 'public');
+                    }
+
+                    $subtask->save();
+                }
+            }
+        }
+
+        return redirect()->route('draft.index')->with('success', 'Draft Task updated successfully.');
+    }
+
+    /**
+     * publish a draft task by ID.
      *
      * @param int $id
      * @return RedirectResponse
