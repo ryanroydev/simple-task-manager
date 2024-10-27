@@ -47,7 +47,7 @@
                                     <th>Status</th>
                                     <th><a href="{{ route('draft.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
                                     <th>Completed Subtask</th>
-                                    <th>Actions</th>
+                                    <th style="min-width: 180px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,23 +80,23 @@
                                             @if ($task->file_path)
                                                 <a href="#" class="btn btn-primary btn-sm"
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
-                                                    title="View Image"><i class="fas fa-eye"></i></a>
+                                                    title="View Image"><i class="fas fa-eye"></i> Image</a>
                                             @endif
                                             <a href="{{ route('draft.edit',$task->id) }}" class="btn btn-primary btn-sm"
-                                                   title="Edit Draft Task"><i class="fas fa-edit"></i></a>
+                                                   title="Edit Draft Task"><i class="fas fa-edit"></i> Edit</a>
                                             <form action="{{ route('draft.publish', $task->id) }}" method="POST" 
                                                 class="d-inline" >
                                                 @csrf
                                                
                                                 <button type="submit" class="btn btn-success btn-sm" title="Publish Task"><i
-                                                        class="fas fa-save"></i></button>
+                                                        class="fas fa-save"></i> Publish</button>
                                             </form>
                                             <form action="{{ route('draft.destroy', $task->id) }}" method="POST" 
                                                 class="d-inline" >
                                                 @csrf
                                                 @method('delete')
                                                 <button type="submit" class="btn btn-danger btn-sm" title="Move to Trash"><i
-                                                        class="fas fa-trash"></i></button>
+                                                        class="fas fa-trash"></i> Trash</button>
                                             </form>
                                             
 
@@ -111,7 +111,7 @@
                                                         <th>Sub task Content</th>
                                                         <th>Status</th>
                                                         <th>Created At</th>
-                                                        <th>Actions</th>
+                                                        <th style="min-width: 180px;">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -126,7 +126,7 @@
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('{{ asset('storage/' . $subtask->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
-                                                                            class="fas fa-eye fa-sm"></i></a>
+                                                                            class="fas fa-eye fa-sm"></i> Image</a>
                                                                 @endif
                                                                
                                                                 

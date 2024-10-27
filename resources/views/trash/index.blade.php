@@ -48,7 +48,7 @@
                                     <th>Status</th>
                                     <th><a href="{{ route('trash.index', array_merge(request()->all(), ['order_by' => 'created_at', 'order_direction' => request('order_direction') == 'asc' ? 'desc' : 'asc'])) }}">Created At</a></th>
                                     <th>Completed Subtask</th>
-                                    <th>Actions</th>
+                                    <th style="min-width: 180px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,21 +80,21 @@
                                             @if ($task->file_path)
                                                 <a href="#" class="btn btn-primary btn-sm"
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
-                                                    title="View Image"><i class="fas fa-eye"></i></a>
+                                                    title="View Image"><i class="fas fa-eye"> Image</i></a>
                                             @endif
                                             <form action="{{ route('trash.restore', $task->id) }}" method="POST" 
                                                 class="d-inline" >
                                                 @csrf
                                                
                                                 <button type="submit" class="btn btn-success btn-sm" title="Restore Task"><i
-                                                        class="fas fa-undo"></i></button>
+                                                        class="fas fa-undo"></i> Restore</button>
                                             </form>
                                             <form action="{{ route('trash.destroy', $task->id) }}" method="POST" 
                                                 class="d-inline" onsubmit="return confirmDelete();">
                                                 @csrf
                                                 @method('delete')
                                                 <button type="submit" class="btn btn-danger btn-sm" title="Remove Permanently"><i
-                                                        class="fas fa-trash"></i></button>
+                                                        class="fas fa-trash"></i> Delete</button>
                                             </form>
                                             
 
@@ -109,7 +109,7 @@
                                                         <th>Sub task Content</th>
                                                         <th>Status</th>
                                                         <th>Created At</th>
-                                                        <th>Actions</th>
+                                                        <th style="min-width: 180px;">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -124,7 +124,7 @@
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('{{ asset('storage/' . $subtask->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
-                                                                            class="fas fa-eye fa-sm"></i></a>
+                                                                            class="fas fa-eye fa-sm"></i> Image</a>
                                                                 @endif
                                                                
                                                                 

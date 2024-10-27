@@ -66,7 +66,7 @@
                                         </a>
                                     </th>
                                     <th>Completed Subtask</th>
-                                    <th style="min-width: 120px;">Actions</th>
+                                    <th style="min-width: 180px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,19 +109,19 @@
                                             @if ($task->file_path)
                                                 <a href="#" class="btn btn-primary btn-sm"
                                                     onclick="window.open('{{ asset('storage/' . $task->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
-                                                    title="View Image"><i class="fas fa-eye"></i></a>
+                                                    title="View Image"><i class="fas fa-eye"></i> Image</a>
                                             @endif
                                             <form action="{{ route('tasks.draft', $task->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="btn btn-warning btn-sm" title="Move to Draft">
-                                                    <i class="fas fa-file-alt"></i></button>
+                                                    <i class="fas fa-file-alt"></i> Draft</button>
                                             </form>
                                             <form action="{{ route('tasks.trash', $task->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="btn btn-danger btn-sm" title="Remove Tasks"><i
-                                                        class="fas fa-trash"></i></button>
+                                                        class="fas fa-trash"></i> Delete</button>
                                             </form>
 
                                         </td>
@@ -135,7 +135,7 @@
                                                         <th>Sub task Content</th>
                                                         <th style="min-width: 120px;">Status</th>
                                                         <th style="min-width: 120px;">Created At</th>
-                                                        <th style="min-width: 120px;">Actions</th>
+                                                        <th style="min-width: 180px;">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -165,7 +165,7 @@
                                                                     <a href="#" class="btn btn-primary btn-sm"
                                                                         onclick="window.open('{{ asset('storage/' . $subtask->file_path) }}','popUpWindow','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');"
                                                                         title="View Image"><i
-                                                                            class="fas fa-eye fa-sm"></i></a>
+                                                                            class="fas fa-eye fa-sm"></i> View</a>
                                                                 @endif
                                                                 
                                                                 <form action="{{ route('tasks.trash', $subtask->id) }}"
@@ -173,7 +173,7 @@
                                                                     @csrf
                                                                     <button type="submit" class="btn btn-danger btn-sm"
                                                                         title="Remove Task"><i
-                                                                            class="fas fa-trash fa-sm"></i></button>
+                                                                            class="fas fa-trash fa-sm"></i> Delete</button>
                                                                 </form>
                                                             </td>
                                                         </tr>
